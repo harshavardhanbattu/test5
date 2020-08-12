@@ -1,0 +1,7 @@
+---
+- name: Patching the linux system using patching roles
+  hosts: all
+  become: true
+  roles:
+    - patching
+

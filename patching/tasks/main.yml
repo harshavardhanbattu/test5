@@ -1,0 +1,4 @@
+---
+# tasks file for patching
+- include_tasks: ubuntu.yml
+- include_tasks: centos.yml
