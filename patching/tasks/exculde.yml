@@ -1,0 +1,19 @@
+- name: update the system
+  yum:
+    name: '*'
+    state: latest
+    exclude: http*,ntp*,tree*
+  when: ansible_os_family == "RedHat"  
+- name: Check for reboot hint.
+  shell: LAST_KERNEL=$(rpm -q --last kernel | awk 'NR==1{sub(/kernel-/,""); print $1}'); CURRENT_KERNEL=$(uname -r); if [ $LAST_KERNEL != $CURRENT_KERNEL ]; then echo 'reboot'; else echo 'no'; fi
+  ignore_errors: true
+  register: reboot_hint
+- name: server was rebooting if require
+  shell: shutdown -r +1 "Reboot required for updated kernel"
+  async: 0
+  poll: 0
+  ignore_errors: true
+  when: reboot_hint.stdout.find("reboot") != -1
+  register: rebooting
+- pause:
+    minutes: 0.30
